@@ -7,6 +7,7 @@ import {
 } from 'react-router-dom';
 
 import Shop from './shop/pages/Shop';
+import Cart from './shop/pages/Cart'
 import Home from './user/pages/Home';
 import NewItem from './shop/pages/NewItem';
 import CategoryItems from './shop/pages/CategoryItems';
@@ -37,10 +38,13 @@ const App = () => {
         <Route path="/shop" exact>
           <Shop />
         </Route>
+        <Route path="/cart/:userId" exact>
+          <Cart />
+        </Route>
         <Route path="/:categoryId/items" exact>
           <CategoryItems />
         </Route>
-        <Route path="/places/new" exact>
+        <Route path="/items/new" exact>
           <NewItem />
         </Route>
         <Route path="/items/:itemId">

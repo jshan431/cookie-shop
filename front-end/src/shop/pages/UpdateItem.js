@@ -11,38 +11,28 @@ import {
 import { useForm } from '../../shared/hooks/form-hook';
 import './PlaceForm.css';
 
-const DUMMY_PLACES = [
+const DUMMY_ITEMS = [
   {
     id: 'p1',
-    title: 'Empire State Building',
-    description: 'One of the most famous sky scrapers in the world!',
+    title: 'Chocolate Chip cookies',
+    description: 'Soft cookie with bits of chocolate',
     imageUrl:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/NYC_Empire_State_Building.jpg/640px-NYC_Empire_State_Building.jpg',
-    address: '20 W 34th St, New York, NY 10001',
-    location: {
-      lat: 40.7484405,
-      lng: -73.9878584
-    },
-    creator: 'u1'
+      'https://divascancook.com/wp-content/uploads/2015/06/gluten-free-chocolate-chip-cookies-recipe-chewy.jpg',
+    category: 'cookies'
   },
   {
     id: 'p2',
-    title: 'Emp. State Building',
-    description: 'One of the most famous sky scrapers in the world!',
+    title: 'Red Velvet',
+    description: 'Red Relvet Cupcake with vanilla frosting',
     imageUrl:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/NYC_Empire_State_Building.jpg/640px-NYC_Empire_State_Building.jpg',
-    address: '20 W 34th St, New York, NY 10001',
-    location: {
-      lat: 40.7484405,
-      lng: -73.9878584
-    },
-    creator: 'u2'
+      'https://image.shutterstock.com/image-photo/red-velvet-cupcakes-260nw-76892959.jpg',
+    category: 'cupcakes'
   }
 ];
 
-const UpdatePlace = () => {
+const UpdateItem = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const placeId = useParams().placeId;
+  const itemId = useParams().itemId;
 
   const [formState, inputHandler, setFormData] = useForm(
     {
@@ -53,23 +43,31 @@ const UpdatePlace = () => {
       description: {
         value: '',
         isValid: false
+      },
+      price: {
+        value: '',
+        isValid: false
       }
     },
     false
   );
 
-  const identifiedPlace = DUMMY_PLACES.find(p => p.id === placeId);
+  const identifiedItem = DUMMY_ITEMS.find(p => p.id === itemId);
 
   useEffect(() => {
-    if (identifiedPlace) {
+    if (identifiedItem) {
       setFormData(
         {
           title: {
-            value: identifiedPlace.title,
+            value: identifiedItem.title,
             isValid: true
           },
           description: {
-            value: identifiedPlace.description,
+            value: identifiedItem.description,
+            isValid: true
+          },
+          price: {
+            value: identifiedItem.price,
             isValid: true
           }
         },
@@ -77,18 +75,18 @@ const UpdatePlace = () => {
       );
     }
     setIsLoading(false);
-  }, [setFormData, identifiedPlace]);
+  }, [setFormData, identifiedItem]);
 
-  const placeUpdateSubmitHandler = event => {
+  const itemUpdateSubmitHandler = event => {
     event.preventDefault();
     console.log(formState.inputs);
   };
 
-  if (!identifiedPlace) {
+  if (!identifiedItem) {
     return (
       <div className="center">
         <Card>
-          <h2>Could not find place!</h2>
+          <h2>Could not find item!</h2>
         </Card>
       </div>
     );
@@ -103,7 +101,7 @@ const UpdatePlace = () => {
   }
 
   return (
-    <form className="place-form" onSubmit={placeUpdateSubmitHandler}>
+    <form className="place-form" onSubmit={itemUpdateSubmitHandler}>
       <Input
         id="title"
         element="input"
@@ -132,4 +130,4 @@ const UpdatePlace = () => {
   );
 };
 
-export default UpdatePlace;
+export default UpdateItem;

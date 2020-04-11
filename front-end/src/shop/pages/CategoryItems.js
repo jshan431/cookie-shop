@@ -14,8 +14,8 @@ const DUMMY_ITEMS = [
   },
   {
     id: 'p2',
-    title: 'Emp. State Building',
-    description: 'One of the most famous sky scrapers in the world!',
+    title: 'Red Velvet',
+    description: 'Red Relvet Cupcake with vanilla frosting',
     imageUrl:
       'https://image.shutterstock.com/image-photo/red-velvet-cupcakes-260nw-76892959.jpg',
     category: 'cupcakes'

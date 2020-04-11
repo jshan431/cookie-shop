@@ -20,7 +20,7 @@ const NewItem= () => {
         value: '',
         isValid: false
       },
-      address: {
+      price: {
         value: '',
         isValid: false
       }
