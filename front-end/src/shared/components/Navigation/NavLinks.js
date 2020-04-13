@@ -19,6 +19,11 @@ const NavLinks = props => {
           SHOP
         </NavLink>
       </li>
+      <li>
+        <NavLink to="/admin" exact>
+          Admin
+        </NavLink>
+      </li>
       {auth.isLoggedIn && (
         <li>
           <NavLink to="/cart/:userId">CART</NavLink>

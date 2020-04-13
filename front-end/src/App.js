@@ -6,6 +6,7 @@ import {
   Switch
 } from 'react-router-dom';
 
+import Admin from './user/pages/Admin';
 import Shop from './shop/pages/Shop';
 import Cart from './shop/pages/Cart'
 import Home from './user/pages/Home';
@@ -67,6 +68,9 @@ const App = () => {
         </Route>
         <Route path="/auth">
           <Auth />
+        </Route>
+        <Route path="/admin">
+          <Admin />
         </Route>
         <Redirect to="/auth" />
       </Switch>

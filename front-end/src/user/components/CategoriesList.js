@@ -21,9 +21,9 @@ const CategoriesList = props => {
         <CategoryItem
           key={category.id}
           id={category.id}
-          image={category.image}
-          name={category.name}
-          itemCount={category.items}
+          image={category.categoryImageUrl}
+          name={category.categoryName}
+          itemCount={category.items.length}
         />
       ))}
     </ul>

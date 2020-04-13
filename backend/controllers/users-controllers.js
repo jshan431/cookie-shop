@@ -71,7 +71,51 @@ const signup = async (req, res, next) => {
 };
 
 const login = async (req, res, next) => {
-  console.log("In users login controller");
+  const { email, password} = req.body;
+
+  let existingUser;
+  try {
+    existingUser = await User.findOne({email: email});
+  } catch (err) {
+    const error = new HttpError(
+      'Loggin in failed, please try again later.',
+      500
+    );
+    return next(error);
+  }
+
+  if(!existingUser){
+    const error = new HttpError(
+      'No user found, signup instead',
+      401
+    );
+    return next(error);
+  }
+
+  let isValidPassword = false;
+  try{
+    isValidPassword = await bcrypt.compare(password, existingUser.password);
+  } catch (err) {
+    const error = new HttpError(
+      'Could not log you in, please check your credentials and try again.',
+      500
+    );
+    return next(error);
+  }
+
+  if(!isValidPassword) {
+    const error = new HttpError(
+      'Wrong password, could not log you in.',
+      401
+    );
+    return next(error);
+  }
+
+  //send back id, email
+  res.json({
+    userId: existingUser.id,
+    email: existingUser.email
+  });
 }
 
 exports.signup = signup;
