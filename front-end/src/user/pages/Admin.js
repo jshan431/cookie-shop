@@ -153,30 +153,33 @@ const Admin = () => {
       <Card className="authentication">
         {isLoading && <LoadingSpinner asOverlay />}
         <form onSubmit={adminSubmitHandler}>
-          {!isCreateMode && (
+          {!isCreateMode ? (
             <React.Fragment>
               <Select onSelectChange={handleSelectChange} arrayOfData={loadedCategories}/>
-              
+
+            </React.Fragment>
+          ) : (
+            <React.Fragment>
+              <Input
+              element="input"
+              id="categoryName"
+              type="text"
+              label="Category Name"
+              validators={[VALIDATOR_REQUIRE()]}
+              errorText="Please enter a name."
+              onInput={inputHandler}
+              />
+              <Input
+                element="input"
+                id="categoryImageUrl"
+                type="text"
+                label="Category Image Url"
+                validators={[VALIDATOR_REQUIRE()]}
+                errorText="Please enter a valid image Url"
+                onInput={inputHandler}
+              />
             </React.Fragment>
           )}
-          <Input
-            element="input"
-            id="categoryName"
-            type="text"
-            label="Category Name"
-            validators={[VALIDATOR_REQUIRE()]}
-            errorText="Please enter a name."
-            onInput={inputHandler}
-          />
-          <Input
-            element="input"
-            id="categoryImageUrl"
-            type="text"
-            label="Category Image Url"
-            validators={[VALIDATOR_REQUIRE()]}
-            errorText="Please enter a valid image Url"
-            onInput={inputHandler}
-          />
           <Button type="submit" disabled={!formState.isValid}>
             {isCreateMode ? 'NEW CATEGORY' : 'UPDATE CATEGORY'}
           </Button>
