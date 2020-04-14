@@ -23,10 +23,10 @@ const CategoriesList = props => {
         <Item
           key={item.id}
           id={item.id}
-          image={item.imageUrl}
+          image={item.image}
           title={item.title}
           description={item.description}
-          creatorId={item.creator}
+          categoryId={item.categoryId}
         />
       ))}
     </ul>

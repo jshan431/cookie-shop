@@ -56,6 +56,52 @@ const postCategory = async (req, res, next) => {
   
 }
 
+const updateCategory = async (req, res, next) => {
+  //look at req and check if any validation errors were detected
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError('Invalid inputs passed, please check your data.', 422)
+    );
+  }
+
+  const { categoryName, categoryImageUrl } = req.body;
+  const categoryId = req.params.cid;
+
+  let category;
+  try {
+    category = await Category.findById(categoryId);
+  } catch (err) {
+    const error = new HttpError(
+      'Something went wrong, could not update category',
+      500
+    );
+    return next(error);
+  }
+  console.log(category);
+  // Check if admin is trying to update category
+
+  // make changes for the found category in the DB
+  category.categoryName = categoryName;
+  category.categoryImageUrl = categoryImageUrl;
+
+  console.log("after changes");
+  console.log(category);
+
+  // store updated category
+  try {
+    await category.save();
+  } catch (err) {
+    const error = new HttpError(
+      'Something went wrong, could not update category. Try later',
+      500
+    );
+    return next(error);
+  }
+  //turn our given mongoose object back to a JS object.
+  res.status(200).json({ category: category.toObject({ getters: true }) });
+};
+
 const postItem = async (req, res, next) => {
   //look at req and check if any validation errors were detected
   const errors = validationResult(req);
@@ -78,7 +124,6 @@ const postItem = async (req, res, next) => {
   try {
     categoryCheck = await Category.findById({_id: categoryId});
   } catch (err) {
-    console.log("inside the catch");
     const error = new HttpError(
       'Creating item failed, please try again later.',
       500
@@ -113,4 +158,4 @@ const postItem = async (req, res, next) => {
 
 exports.postItem = postItem;
 exports.postCategory = postCategory;
-
+exports.updateCategory = updateCategory;

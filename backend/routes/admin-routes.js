@@ -24,4 +24,14 @@ router.post(
   adminController.postItem
 );
 
+router.patch(
+  '/category/:cid',
+  [
+    check('categoryName')
+      .not()
+      .isEmpty()
+  ],
+  adminController.updateCategory
+);
+
 module.exports = router;

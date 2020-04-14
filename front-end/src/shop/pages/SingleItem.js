@@ -6,25 +6,26 @@ import Item from '../components/Item';
 import Button from '../../shared/components/FormElements/Button';
 import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
 import ErrorModal from '../../shared/components/UIElements/ErrorModal';
-import ItemsList from '../../shop/components/ItemsList';
 import '../components/PlaceList.css';
 
-const Shop = () => {
+const SingleItem = () => {
 
-  const [loadedItems, setLoadedItems] = useState();
+  const [loadedItem, setLoadedItem] = useState();
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
 
+  const itemId = useParams().itemId;
+
   useEffect(() => {
-    const fetchItems = async () => {
+    const fetchItem = async () => {
       try {
         const responseData = await sendRequest(
-          `http://localhost:5000/api/items`
+          `http://localhost:5000/api/items/${itemId}`
         );
-        setLoadedItems(responseData.items);
+        setLoadedItem(responseData.item);
       } catch (err) {}
     };
-    fetchItems();
-  }, [sendRequest]);
+    fetchItem();
+  }, [sendRequest, itemId]);
 
   return (
     <React.Fragment>
@@ -34,11 +35,20 @@ const Shop = () => {
           <LoadingSpinner />
         </div>
       )}
-      {!isLoading && loadedItems && (
-        <ItemsList items={loadedItems} />
+      {!isLoading && loadedItem && (
+        <div className="place-list">
+        <Item
+          key={loadedItem.id}
+          id={loadedItem.id}
+          image={loadedItem.image}
+          title={loadedItem.title}
+          description={loadedItem.description}
+          categoryId={loadedItem.categoryId}
+        />
+        </div>
       )}
     </React.Fragment>
   );
 };
 
-export default Shop;
+export default SingleItem;

@@ -16,6 +16,7 @@ import UpdateItem from './shop/pages/UpdateItem';
 import Auth from './user/pages/Auth';
 import MainNavigation from './shared/components/Navigation/MainNavigation';
 import { AuthContext } from './shared/context/auth-context';
+import SingleItem from './shop/pages/SingleItem';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -45,6 +46,9 @@ const App = () => {
         <Route path="/:categoryId/items" exact>
           <CategoryItems />
         </Route>
+        <Route path="/item/:itemId" exact>
+          <SingleItem />
+        </Route>
         <Route path="/items/new" exact>
           <NewItem />
         </Route>
@@ -65,6 +69,9 @@ const App = () => {
         </Route>
         <Route path="/:categoryId/items" exact>
           <CategoryItems />
+        </Route>
+        <Route path="/item/:itemId" exact>
+          <SingleItem />
         </Route>
         <Route path="/auth">
           <Auth />

@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-
+import { Link } from 'react-router-dom';
 import Card from '../../shared/components/UIElements/Card';
 import Button from '../../shared/components/FormElements/Button';
 import Modal from '../../shared/components/UIElements/Modal';
@@ -70,28 +70,30 @@ const PlaceItem = props => {
       </Modal>
       <li className="place-item">
         <Card className="place-item__content">
-          <div className="place-item__image">
-            <img src={props.image} alt={props.title} />
-          </div>
-          <div className="place-item__info">
-            <h2>{props.title}</h2>
-            <h3>{props.price}</h3>
-            <p>{props.description}</p>
-          </div>
-          <div className="place-item__actions">
-            <Button inverse onClick={() => {console.log("add to cart button")}}>
-              Add to Cart
-            </Button>
-            {auth.isLoggedIn && (
-              <Button to={`/places/${props.id}`}>EDIT</Button>
-            )}
-
-            {auth.isLoggedIn && (
-              <Button danger onClick={showDeleteWarningHandler}>
-                DELETE
+          <Link to={`/item/${props.id}`}>
+            <div className="place-item__image">
+              <img src={props.image} alt={props.title} />
+            </div>
+            <div className="place-item__info">
+              <h2>{props.title}</h2>
+              <h3>{props.price}</h3>
+              <p>{props.description}</p>
+            </div>
+            <div className="place-item__actions">
+              <Button inverse onClick={() => {console.log("add to cart button")}}>
+                Add to Cart
               </Button>
-            )}
-          </div>
+              {auth.isLoggedIn && (
+                <Button to={`/places/${props.id}`}>EDIT</Button>
+              )}
+
+              {auth.isLoggedIn && (
+                <Button danger onClick={showDeleteWarningHandler}>
+                  DELETE
+                </Button>
+              )}
+            </div>
+          </Link>
         </Card>
       </li>
     </React.Fragment>

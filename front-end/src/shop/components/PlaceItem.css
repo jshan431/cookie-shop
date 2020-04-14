@@ -2,6 +2,10 @@
   margin: 1rem 0;
 }
 
+.place-item a {
+  text-decoration: none;
+}
+
 .place-item__content {
   padding: 0;
 }
@@ -9,6 +13,7 @@
 .place-item__info {
   padding: 1rem;
   text-align: center;
+  color: #ff0055;
 }
 
 .place-item__image {

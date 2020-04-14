@@ -1,4 +1,5 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 
 import Input from '../../shared/components/FormElements/Input';
 import Button from '../../shared/components/FormElements/Button';
@@ -8,8 +9,10 @@ import {
 } from '../../shared/util/validators';
 import { useForm } from '../../shared/hooks/form-hook';
 import './PlaceForm.css';
+import { useHttpClient } from '../../shared/hooks/http-hook';
 
 const NewItem= () => {
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [formState, inputHandler] = useForm(
     {
       title: {
@@ -20,7 +23,11 @@ const NewItem= () => {
         value: '',
         isValid: false
       },
-      price: {
+      image: {
+        value: '',
+        isValid: false
+      },
+      categoryId: {
         value: '',
         isValid: false
       }
@@ -28,9 +35,25 @@ const NewItem= () => {
     false
   );
 
-  const placeSubmitHandler = event => {
+  const history = useHistory();
+
+  const placeSubmitHandler = async event => {
     event.preventDefault();
-    console.log(formState.inputs); // send this to the backend!
+    try {
+      console.log("inside the try catch");
+      await sendRequest(
+        'http://localhost:5000/api/admin/item',
+        'POST',
+        JSON.stringify({
+          title: formState.inputs.title.value,
+          description: formState.inputs.description.value,
+          image: formState.inputs.image.value,
+          categoryId: formState.inputs.categoryId.value
+        }),
+        { 'Content-Type': 'application/json' }
+      );
+      history.push('/shop');
+    } catch (err) {}
   };
 
   return (
@@ -53,15 +76,23 @@ const NewItem= () => {
         onInput={inputHandler}
       />
       <Input
-        id="price"
+        id="image"
         element="input"
-        label="Price"
+        label="Image"
         validators={[VALIDATOR_REQUIRE()]}
-        errorText="Please enter a valid price."
+        errorText="Please enter a valid image URL."
+        onInput={inputHandler}
+      />
+      <Input
+        id="categoryId"
+        element="input"
+        label="Category Id"
+        validators={[VALIDATOR_REQUIRE()]}
+        errorText="Please enter a valid Category Id."
         onInput={inputHandler}
       />
       <Button type="submit" disabled={!formState.isValid}>
-        ADD PLACE
+        ADD ITEM
       </Button>
     </form>
   );
