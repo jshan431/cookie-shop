@@ -97,15 +97,15 @@ const PlaceItem = props => {
               <Button inverse onClick={() => {console.log("add to cart button")}}>
                 Add to Cart
               </Button>
-              {auth.isLoggedIn && (
-                <Button to={`/places/${props.id}`}>EDIT</Button>
+              {auth.isAdmin && (
+                <Button to={`/items/${props.id}`}>EDIT</Button>
               )}
+              {auth.isAdmin && (
                 <Button danger onClick={showDeleteWarningHandler}>
                   DELETE
                 </Button>
-              
+              )}
             </div>
-          
         </Card>
       </li>
     </React.Fragment>

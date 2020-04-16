@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React from 'react';
 import {
   BrowserRouter as Router,
   Route,
@@ -19,31 +19,14 @@ import { AuthContext } from './shared/context/auth-context';
 import SingleItem from './shop/pages/SingleItem';
 import { useAuth } from './shared/hooks/auth-hook';
 
+let logoutTimer;
+
 const App = () => {
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [token, setToken] = useState(false);
-  const [userId, setUserId] = useState(false);
-
-  const login = useCallback((uid, token, role) => {
-    console.log(`role: ${role}`);
-    console.log(`token: ${token}`);
-    if(role === 1){
-      setIsAdmin(true);
-    }
-    setToken(token);
-    setUserId(uid);
-    
-  }, []);
-
-  const logout = useCallback(() => {
-    setToken(null);
-    setUserId(null);
-  }, []);
-
+  const { token, login, logout, userId, isAdmin} = useAuth();
   let routes;
 
   // Make another route for logged in users that are not admin to see the cart
-  if (isAdmin) {
+  if (isAdmin && token) {
     routes = (
       <Switch>
         <Route path="/" exact>
@@ -69,6 +52,27 @@ const App = () => {
         </Route>
         <Route path="/items/:itemId">
           <UpdateItem />
+        </Route>
+        <Redirect to="/" />
+      </Switch>
+    );
+  } else if (token) {
+    routes = (
+      <Switch>
+        <Route path="/" exact>
+          <Home />
+        </Route>
+        <Route path="/shop" exact>
+          <Shop />
+        </Route>
+        <Route path="/cart/:userId" exact>
+          <Cart />
+        </Route>
+        <Route path="/:categoryId/items" exact>
+          <CategoryItems />
+        </Route>
+        <Route path="/item/:itemId" exact>
+          <SingleItem />
         </Route>
         <Redirect to="/" />
       </Switch>

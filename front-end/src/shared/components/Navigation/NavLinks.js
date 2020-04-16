@@ -21,7 +21,7 @@ const NavLinks = props => {
       </li>
       {auth.isLoggedIn && (
         <li>
-          <NavLink to="/cart/:userId">CART</NavLink>
+          <NavLink to={`/cart/${auth.userId}`}>CART</NavLink>
         </li>
       )}
       {auth.isAdmin && (
