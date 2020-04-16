@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import { useHistory } from 'react-router-dom';
 import ErrorModal from '../../shared/components/UIElements/ErrorModal';
 import Input from '../../shared/components/FormElements/Input';
@@ -8,6 +8,8 @@ import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
 import { useForm } from '../../shared/hooks/form-hook';
 import { useHttpClient } from '../../shared/hooks/http-hook';
 import Select from '../../shared/components/FormElements/Select';
+import ImageUpload from '../../shared/components/FormElements/ImageUpload';
+import { AuthContext } from '../../shared/context/auth-context';
 import {
   VALIDATOR_EMAIL,
   VALIDATOR_MINLENGTH,
@@ -15,6 +17,7 @@ import {
 } from '../../shared/util/validators';
 
 const Admin = () => {
+  const auth = useContext(AuthContext);
   const [isCreateMode, setIsCreateMode] = useState(true);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [loadedCategories, setLoadedCategories] = useState();
@@ -54,15 +57,15 @@ const Admin = () => {
 
     if (isCreateMode){
       try {
-        await sendRequest(
+        const formData = new FormData();
+        formData.append('categoryName', formState.inputs.categoryName.value);
+        formData.append('categoryImageUrl', formState.inputs.categoryImageUrl.value);
+        const responseData = await sendRequest(
           'http://localhost:5000/api/admin/category',
           'POST',
-          JSON.stringify({
-            categoryName: formState.inputs.categoryName.value,
-            categoryImageUrl: formState.inputs.categoryImageUrl.value
-          }),
+          formData,
           {
-            'Content-Type': 'application/json'
+            Authorization: 'Bearer ' + auth.token
           }
         );
         history.push('/');
@@ -70,49 +73,22 @@ const Admin = () => {
       
     } else {
       try {
-        await sendRequest(
+        
+        const formData = new FormData();
+        console.log(formState.inputs.categoryName.value);
+        formData.append('categoryName', formState.inputs.categoryName.value);
+        formData.append('categoryImageUrl', formState.inputs.categoryImageUrl.value);
+        const responseData = await sendRequest(
           `http://localhost:5000/api/admin/category/${selectedValue.id}`,
           'PATCH',
-          JSON.stringify({
-            categoryName: "cookie",
-            categoryImageUrl: "https://www.awickedwhisk.com/wp-content/uploads/2018/02/Green-Soft-Sugar-Cookies7-2-683x1024.jpg"
-          }),
+          formData,
           {
-            'Content-Type': 'application/json'
+            Authorization: 'Bearer ' + auth.token
           }
         );
         history.push('/');
       } catch (err) {}
-      /*
-      try {
-        
-        const response = await fetch('http://localhost:5000/api/users/signup', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            name: formState.inputs.name.value,
-            email: formState.inputs.email.value,
-            password: formState.inputs.password.value
-          })
-        });
-
-        const responseData = await response.json();
-        if(!response.ok){        // if we dont get a 200 ish status code 
-          throw new Error(responseData.message);
-        }
-        console.log(responseData);
-        setIsLoading(false);
-        auth.login();
-      } catch (err) {
-        console.log(err);
-        setIsLoading(false);
-        setError(err.message ||  'Something went wrong, please try again');
-      }
-      */
     }
-
   };
 
   const switchModeHandler = async () => {
@@ -131,6 +107,8 @@ const Admin = () => {
     const selectedCategoryObject = loadedCategories.find(category => category.id === selectedCategoryId);
     
     setSelectedValue(selectedCategoryObject);
+
+    /*
     // set the form
     setFormData(
       {
@@ -145,6 +123,7 @@ const Admin = () => {
       },
       true
     )
+    */
   };
 
   return(
@@ -155,8 +134,17 @@ const Admin = () => {
         <form onSubmit={adminSubmitHandler}>
           {!isCreateMode ? (
             <React.Fragment>
-              <Select onSelectChange={handleSelectChange} arrayOfData={loadedCategories}/>
-
+            <Select onSelectChange={handleSelectChange} arrayOfData={loadedCategories}/>
+              <Input
+              element="input"
+              id="categoryName"
+              type="text"
+              label="Update Category Name"
+              validators={[VALIDATOR_REQUIRE()]}
+              errorText="Please enter a name."
+              onInput={inputHandler}
+              />
+              <ImageUpload center id="categoryImageUrl" onInput={inputHandler} errorText="Please provide an image."/>
             </React.Fragment>
           ) : (
             <React.Fragment>
@@ -169,15 +157,7 @@ const Admin = () => {
               errorText="Please enter a name."
               onInput={inputHandler}
               />
-              <Input
-                element="input"
-                id="categoryImageUrl"
-                type="text"
-                label="Category Image Url"
-                validators={[VALIDATOR_REQUIRE()]}
-                errorText="Please enter a valid image Url"
-                onInput={inputHandler}
-              />
+              <ImageUpload center id="categoryImageUrl" onInput={inputHandler} errorText="Please provide an image."/>
             </React.Fragment>
           )}
           <Button type="submit" disabled={!formState.isValid}>
@@ -199,3 +179,13 @@ export default Admin;
  * initialValue={selectedValue.categoryImageUrl}
             initialValid={true}
  */
+
+/*    previous form validatation  
+
+  <Button type="submit" disabled={!formState.isValid}>
+  {isCreateMode ? 'NEW CATEGORY' : 'UPDATE CATEGORY'}
+  </Button>
+
+*/
+
+//`http://localhost:5000/api/admin/category/${selectedValue.id}`,

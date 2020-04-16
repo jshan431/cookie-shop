@@ -23,13 +23,13 @@ const CategoryItems = () => {
     fetchItems();
   }, [sendRequest, categoryId]);
 
-  /*
-  const placeDeletedHandler = deletedPlaceId => {
-    setLoadedItems(prevPlaces =>
-      prevPlaces.filter(place => place.id !== deletedPlaceId)
+  const itemDeleteHandler = deletedItemId => {
+    console.log(deletedItemId);
+    setLoadedItems(prevItems =>
+      prevItems.filter(item => item.id !== deletedItemId)
     );
   };
-  */
+  
   return (
     <React.Fragment>
       <ErrorModal error={error} onClear={clearError} />
@@ -39,7 +39,7 @@ const CategoryItems = () => {
         </div>
       )}
       {!isLoading && loadedItems && (
-        <ItemsList items={loadedItems} />
+        <ItemsList items={loadedItems} onDeleteItem={itemDeleteHandler}/>
       )}
     </React.Fragment>
   );

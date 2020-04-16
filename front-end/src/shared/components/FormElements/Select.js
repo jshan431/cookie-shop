@@ -1,5 +1,5 @@
 import React from 'react';
-
+import './Select.css';
 const Select = (props) => {
 
   //On the change event for the select box pass the selected value back to the parent

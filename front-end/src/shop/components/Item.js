@@ -5,9 +5,11 @@ import Button from '../../shared/components/FormElements/Button';
 import Modal from '../../shared/components/UIElements/Modal';
 //import Map from '../../shared/components/UIElements/Map';
 import { AuthContext } from '../../shared/context/auth-context';
+import { useHttpClient } from '../../shared/hooks/http-hook';
 import './PlaceItem.css';
 
 const PlaceItem = props => {
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const auth = useContext(AuthContext);
 
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -26,9 +28,20 @@ const PlaceItem = props => {
     setShowConfirmModal(false);
   };
 
-  const confirmDeleteHandler = () => {
+  const confirmDeleteHandler = async () => {
     setShowConfirmModal(false);
-    console.log('DELETING...');
+    try {
+      await sendRequest(
+        `http://localhost:5000/api/admin/${props.id}`,
+        'DELETE',
+        null,
+        {
+          Authorization: 'Bearer ' + auth.token
+        }
+      );
+      console.log('inside the try. with item id: ' + props.id);
+      props.onDelete(props.id);
+    } catch (err) {}
   };
 
   return (
@@ -64,16 +77,17 @@ const PlaceItem = props => {
         }
       >
         <p>
-          Do you want to proceed and delete this place? Please note that it
+          Do you want to proceed and delete this item? Please note that it
           can't be undone thereafter.
         </p>
       </Modal>
       <li className="place-item">
         <Card className="place-item__content">
-          <Link to={`/item/${props.id}`}>
-            <div className="place-item__image">
-              <img src={props.image} alt={props.title} />
-            </div>
+            <Link to={`/item/${props.id}`}>
+              <div className="place-item__image">
+                <img src={`http://localhost:5000/${props.image}`} alt={props.title} />
+              </div>
+            </Link>
             <div className="place-item__info">
               <h2>{props.title}</h2>
               <h3>{props.price}</h3>
@@ -86,14 +100,12 @@ const PlaceItem = props => {
               {auth.isLoggedIn && (
                 <Button to={`/places/${props.id}`}>EDIT</Button>
               )}
-
-              {auth.isLoggedIn && (
                 <Button danger onClick={showDeleteWarningHandler}>
                   DELETE
                 </Button>
-              )}
+              
             </div>
-          </Link>
+          
         </Card>
       </li>
     </React.Fragment>
@@ -101,3 +113,17 @@ const PlaceItem = props => {
 };
 
 export default PlaceItem;
+
+/**
+ 
+              {auth.isLoggedIn && (
+                <Button to={`/places/${props.id}`}>EDIT</Button>
+              )}
+
+              {auth.isLoggedIn && (
+                <Button danger onClick={showDeleteWarningHandler}>
+                  DELETE
+                </Button>
+              )}
+
+ */

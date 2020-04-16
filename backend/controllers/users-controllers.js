@@ -1,6 +1,6 @@
 const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
-//const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 const HttpError = require('../models/http-error');
 const User = require('../models/user');
 
@@ -52,6 +52,7 @@ const signup = async (req, res, next) => {
     name,
     email,
     password: hashedPassword,
+    role: 0,
     cart: []
   });
 
@@ -66,7 +67,26 @@ const signup = async (req, res, next) => {
     return next(error);
   }
 
-  res.status(201).json({ userId: createdUser.id, email: createdUser.email});
+  //generate token
+  let token;
+  try{
+    //sign returns a string. First argument is the payload (data to encode)
+    //Second argument is the private key
+    token = jwt.sign(
+      {userId: createdUser.id, email: createdUser.email, userRole: createdUser.role}, 
+      'supersecret_dont_share',     //key here must be the same as in login
+      {expiresIn: '1h'}
+    );
+  } catch (err){
+    const error = new HttpError(
+      'Signing up failed, please try again later.',
+      500
+    );
+    return next(error);
+  }
+
+  // send back userId, email, and token
+  res.status(201).json({ userId: createdUser.id, email: createdUser.email, token: token, userRole: createdUser.role});
 
 };
 
@@ -94,6 +114,7 @@ const login = async (req, res, next) => {
 
   let isValidPassword = false;
   try{
+    // Compare the incoming password from the req to the hashed password in the DB with the use of bcrypt
     isValidPassword = await bcrypt.compare(password, existingUser.password);
   } catch (err) {
     const error = new HttpError(
@@ -111,10 +132,30 @@ const login = async (req, res, next) => {
     return next(error);
   }
 
+  // Generate token
+  let token;
+  try{
+    //sign returns a string. First argument is the payload (data to encode)
+    //Second argument is the private key
+    token = jwt.sign(
+      {userId: existingUser.id, email: existingUser.email, userRole: existingUser.role}, 
+      'supersecret_dont_share',     //key here must be the same as in signup
+      {expiresIn: '1h'}
+    );
+  } catch (err){
+    const error = new HttpError(
+      'Logging in failed, please try again later.',
+      500
+    );
+    return next(error);
+  }
+
   //send back id, email
   res.json({
     userId: existingUser.id,
-    email: existingUser.email
+    email: existingUser.email,
+    token: token,
+    userRole: existingUser.role
   });
 }
 

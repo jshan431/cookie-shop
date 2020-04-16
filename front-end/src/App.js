@@ -17,21 +17,33 @@ import Auth from './user/pages/Auth';
 import MainNavigation from './shared/components/Navigation/MainNavigation';
 import { AuthContext } from './shared/context/auth-context';
 import SingleItem from './shop/pages/SingleItem';
+import { useAuth } from './shared/hooks/auth-hook';
 
 const App = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [token, setToken] = useState(false);
+  const [userId, setUserId] = useState(false);
 
-  const login = useCallback(() => {
-    setIsLoggedIn(true);
+  const login = useCallback((uid, token, role) => {
+    console.log(`role: ${role}`);
+    console.log(`token: ${token}`);
+    if(role === 1){
+      setIsAdmin(true);
+    }
+    setToken(token);
+    setUserId(uid);
+    
   }, []);
 
   const logout = useCallback(() => {
-    setIsLoggedIn(false);
+    setToken(null);
+    setUserId(null);
   }, []);
 
   let routes;
 
-  if (isLoggedIn) {
+  // Make another route for logged in users that are not admin to see the cart
+  if (isAdmin) {
     routes = (
       <Switch>
         <Route path="/" exact>
@@ -39,6 +51,9 @@ const App = () => {
         </Route>
         <Route path="/shop" exact>
           <Shop />
+        </Route>
+        <Route path="/admin" exact>
+          <Admin />
         </Route>
         <Route path="/cart/:userId" exact>
           <Cart />
@@ -76,17 +91,24 @@ const App = () => {
         <Route path="/auth">
           <Auth />
         </Route>
-        <Route path="/admin">
-          <Admin />
-        </Route>
         <Redirect to="/auth" />
       </Switch>
     );
   }
 
+  // Wrap Auth Context to parts of our application that wants to use it
+  // Provider takes a value prop which we bind to a new value.
+  // Whenever that value changes, components that listen for it will re-render
+  // !! is used on token to return something truthy or falsey
   return (
     <AuthContext.Provider
-      value={{ isLoggedIn: isLoggedIn, login: login, logout: logout }}
+      value={{ 
+        isLoggedIn: !!token,
+        token: token,
+        userId: userId,
+        login: login,
+        logout: logout,
+        isAdmin: isAdmin }}
     >
       <Router>
         <MainNavigation />

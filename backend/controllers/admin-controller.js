@@ -3,17 +3,19 @@ const mongoose = require('mongoose');
 const Category = require('../models/category');
 const Item = require('../models/item');
 const HttpError = require('../models/http-error');
+const fs = require('fs');
 
 const postCategory = async (req, res, next) => {
   //look at req and check if any validation errors were detected
   const errors = validationResult(req);
   if(!errors.isEmpty()){
+
     return next(
       new HttpError('Invalid inputs passed, please check your data.', 422)
     );
   }
 
-  const { categoryName, categoryImageUrl } = req.body;
+  const { categoryName } = req.body;
 
   //if email exist in db already throw error
   let existingCategory;
@@ -38,7 +40,7 @@ const postCategory = async (req, res, next) => {
 
   const createdCategory = new Category({
     categoryName,
-    categoryImageUrl
+    categoryImageUrl : req.file.path,
   });
 
   // Store created category in DB
@@ -59,9 +61,10 @@ const postCategory = async (req, res, next) => {
 const updateCategory = async (req, res, next) => {
   //look at req and check if any validation errors were detected
   const errors = validationResult(req);
+  console.log(errors);
   if (!errors.isEmpty()) {
     return next(
-      new HttpError('Invalid inputs passed, please check your data.', 422)
+      new HttpError('Invalid inputs passed, please check your data inputs.', 422)
     );
   }
 
@@ -111,12 +114,12 @@ const postItem = async (req, res, next) => {
     );
   }
 
-  const { title, description, image, categoryId } = req.body;
+  const { title, description, categoryId } = req.body;
 
   const createdItem = new Item({
     title,
     description,
-    image,
+    image : req.file.path,
     categoryId
   });
 
@@ -156,6 +159,97 @@ const postItem = async (req, res, next) => {
   res.status(201).json({item: createdItem});
 }
 
+const updateItem = async (req, res, next) => {
+  //look at req and check if any validation errors were detected
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError('Invalid inputs passed, please check your data.', 422)
+    );
+  }
+
+  const { title, description, image } = req.body;
+  const itemId = req.params.iid;
+
+  let item;
+  try{
+    item = await Item.findById(itemId);
+  } catch (err) {
+    const error = new HttpError(
+      'Something went wrong, could not update item.',
+      500
+    );
+    return next(error);
+  }
+
+  // Check the role of the user. If not admin, throw error
+
+
+
+  // make changes for the found item in the DB
+  item.title = title;
+  item.description = description;
+  item.image = image;
+
+  // try to store update item
+  try {
+    await item.save();
+  } catch (err) {
+    const error = new HttpError(
+      'Something went wrong, could not update item.',
+      500
+    );
+    return next(error);
+  }
+  re
+};
+
+const deleteItem = async (req, res, next) => {
+  const itemId = req.params.iid;
+  console.log(itemId);
+  let item;
+  try{
+    item = await Item.findById(itemId).populate('categoryId');
+  } catch (err) {
+    const error = new HttpError(
+      'Something went wrong, could not delete item.',
+      500
+    );
+    return next(error);
+  }
+
+  if(!item){
+    const error = new HttpError('Could not find item for this id.', 401);
+    return next(error);
+  }
+
+  const imagePath = item.image;
+
+  try{
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+    await item.remove({session: sess});
+    item.categoryId.items.pull(item);
+    await item.categoryId.save({session: sess});
+    await sess.commitTransaction();
+  } catch (err) {
+    const error = new HttpError(
+      'Something went wrong, could not delete item. Try again later',
+      500
+    );
+    return next(error);
+  }
+
+  // remove the item's image stored in uploads / images
+  fs.unlink(imagePath, err => {
+    console.log(err);
+  });
+
+  res.status(200).json({ message: 'Deleted item.'});
+};
+
 exports.postItem = postItem;
 exports.postCategory = postCategory;
 exports.updateCategory = updateCategory;
+exports.updateItem = updateItem;
+exports.deleteItem = deleteItem;

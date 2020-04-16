@@ -1,3 +1,6 @@
+const fs = require('fs');
+const path = require('path');
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -10,6 +13,11 @@ const HttpError = require('./models/http-error');
 const app = express();
 
 app.use(bodyParser.json());
+
+//req that have localhost:5000/uploads/images
+//static is a middleware that returns the requested file specifically from the joins paths of uploads images folder
+//all files are locked down except files that go through this middleware
+app.use('/uploads/images', express.static(path.join('uploads', 'images')));
 
 // Prevent CORS errors
 app.use((req, res, next) => {
@@ -36,7 +44,13 @@ app.use((req, res, next) => {
 
 //error handling middleware
 app.use((error, req, res, next) => {
-  
+  //if we get an error in the signup process remove the image that was saved
+  if(req.file){
+    fs.unlink(req.file.path, (err) => {
+      console.log(err);
+    });
+  }
+
   if(res.headerSent){
     return next(error);
   }

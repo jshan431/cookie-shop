@@ -5,7 +5,7 @@ import Item from './Item';
 import Button from '../../shared/components/FormElements/Button';
 import './PlaceList.css';
 
-const CategoriesList = props => {
+const ItemsList = props => {
   if (props.items.length === 0) {
     return (
       <div className="place-list center">
@@ -27,10 +27,11 @@ const CategoriesList = props => {
           title={item.title}
           description={item.description}
           categoryId={item.categoryId}
+          onDelete={props.onDeleteItem}
         />
       ))}
     </ul>
   );
 };
 
-export default CategoriesList;
+export default ItemsList;
