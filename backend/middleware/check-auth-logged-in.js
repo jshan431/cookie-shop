@@ -30,13 +30,9 @@ module.exports = (req, res, next) => {
     // Add a property called userData to the req. body that cotains userId decoded from the token
     req.userData = {userId: decodedToken.userId, userRole: decodedToken.userRole};
 
-    if(req.userData.userRole !== 1){
-      throw new Error('Authorization failed! You cannot access this route');
-    }
     next();     //allow the req to continue its journey
   } catch (err) {
     const error = new HttpError('Authentication failed!', 401);
     return next(error);
   }
 };
-

@@ -23,9 +23,9 @@ const userSchema = new Schema({
 });
 
 userSchema.methods.addToCart = function(item) {
-  // Check if item in cart already exist
+  // Check if item in cart already exist by finding the index
   const cartProductIndex = this.cart.items.findIndex(cp => {
-    return cp.itemId.toString() === itemId._id.toString();
+    return cp.itemId.toString() === item._id.toString();
   });
 
   let newQuantity = 1;

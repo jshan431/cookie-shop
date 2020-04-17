@@ -36,6 +36,10 @@ const NewItem= () => {
       categoryId: {
         value: '',
         isValid: false
+      },
+      price: {
+        value: '',
+        isValid: false
       }
     },
     false
@@ -53,6 +57,7 @@ const NewItem= () => {
       formData.append('description', formState.inputs.description.value);
       formData.append('image', formState.inputs.image.value);
       formData.append('categoryId', formState.inputs.categoryId.value);
+      formData.append('price', formState.inputs.price.value);
       await sendRequest(
         'http://localhost:5000/api/admin/item',
         'POST',
@@ -94,6 +99,14 @@ const NewItem= () => {
           label="Category Id"
           validators={[VALIDATOR_REQUIRE()]}
           errorText="Please enter a valid Category Id."
+          onInput={inputHandler}
+        />
+        <Input
+          id="price"
+          element="input"
+          label="Price"
+          validators={[VALIDATOR_REQUIRE()]}
+          errorText="Please enter a valid Price."
           onInput={inputHandler}
         />
         <Button type="submit" disabled={!formState.isValid}>

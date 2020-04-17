@@ -114,13 +114,14 @@ const postItem = async (req, res, next) => {
     );
   }
 
-  const { title, description, categoryId } = req.body;
+  const { title, description, categoryId, price } = req.body;
 
   const createdItem = new Item({
     title,
     description,
     image : req.file.path,
-    categoryId
+    categoryId,
+    price
   });
 
   let categoryCheck;
@@ -168,7 +169,7 @@ const updateItem = async (req, res, next) => {
     );
   }
 
-  const { title, description, image } = req.body;
+  const { title, description, image, price } = req.body;
   const itemId = req.params.iid;
 
   let item;
@@ -190,6 +191,7 @@ const updateItem = async (req, res, next) => {
   item.title = title;
   item.description = description;
   item.image = image;
+  item.price = price
 
   // try to store update item
   try {

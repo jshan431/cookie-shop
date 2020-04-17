@@ -5,12 +5,12 @@ import Item from './Item';
 import Button from '../../shared/components/FormElements/Button';
 import './PlaceList.css';
 
-const ItemsList = props => {
+const CartList = props => {
   if (props.items.length === 0) {
     return (
       <div className="place-list center">
         <Card>
-          <h2>No items found. Maybe create one?</h2>
+          <h2>No items in cart found. Maybe add one?</h2>
           <Button to="/places/new">Share Place</Button>
         </Card>
       </div>
@@ -21,13 +21,13 @@ const ItemsList = props => {
     <ul className="place-list">
       {props.items.map(item => (
         <Item
-          key={item.id}
-          id={item.id}
-          image={item.image}
-          title={item.title}
-          price={item.price}
-          description={item.description}
-          categoryId={item.categoryId}
+          key={item.itemId.id}
+          id={item.itemId.id}
+          image={item.itemId.image}
+          title={item.itemId.title}
+          price={item.itemId.price}
+          description={item.itemId.description}
+          categoryId={item.itemId.categoryId}
           onDelete={props.onDeleteItem}
         />
       ))}
@@ -35,4 +35,4 @@ const ItemsList = props => {
   );
 };
 
-export default ItemsList;
+export default CartList;
