@@ -103,13 +103,8 @@ const getAllItems = async (req, res, next) => {
 
 const addItemToCart = async (req, res, next) => {
 
-  // Is this the best way or is there a more secure method by getting the user object thats logged in
-  const userId = req.params.uid;
-
-  /*
   // userId we got from the token via check-auth-logged-in
   const userId = req.userData.userId;
-  */
 
   console.log(userId);
 
@@ -175,11 +170,56 @@ const getCart = async (req, res, next) => {
 
 }
 
+const clearItemFromCart = async (req, res, next) => {
+  const itemId = req.body.itemId;
+  
+  let item;
+  try{
+    item = await Item.findById(itemId);
+  } catch (err) {
+    const error = new HttpError(
+      'Something went wrong, could not find item.',
+      500
+    );
+    return next(error);
+  }
+  // userId we got from the token via check-auth-logged-in
+  const userId = req.userData.userId;
+
+  let user;
+  try{
+    user = await User.findById(userId);
+  } catch (err) {
+    const error = new HttpError(
+      'Something went wrong, could not find user with this id.',
+      500
+    );
+    return next(error);
+  }
+
+  try {
+    console.log("user id: " + user._id);
+    console.log("item id: " + item._id);
+    await user.removeFromCart(item._id);
+  } catch (err) {
+    console.log("inside the catch");
+    const error = new HttpError(
+      'Clearing item to cart failed, please try again later.',
+      500
+    );
+    return next(error);
+  }
+  
+  //turn our given mongoose object back to a JS object.
+  res.json({ item: item.toObject({ getters: true }) });
+}
+
 exports.getCategories = getCategories;
 exports.getItemsByCategoryId = getItemsByCategoryId;
 exports.getItemById = getItemById;
 exports.getAllItems = getAllItems;
 exports.addItemToCart = addItemToCart;
 exports.getCart = getCart;
+exports.clearItemFromCart = clearItemFromCart;
 
 //populate('categoryId')

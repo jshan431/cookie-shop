@@ -50,6 +50,19 @@ userSchema.methods.addToCart = function(item) {
   return this.save();
 };
 
+userSchema.methods.removeFromCart = function(productId) {
+  const updatedCartItems = this.cart.items.filter(item => {
+    return item.itemId.toString() !== productId.toString();
+  });
+  this.cart.items = updatedCartItems;
+  return this.save();
+};
+
+userSchema.methods.clearCart = function() {
+  this.cart = { items: [] };
+  return this.save();
+};
+
 // ensure unique email 
 userSchema.plugin(uniqueValidator);
 

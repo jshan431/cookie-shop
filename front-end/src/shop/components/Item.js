@@ -61,6 +61,22 @@ const PlaceItem = props => {
     } catch (err) {}
   }
 
+  const clearItemFromCart = async () => {
+    try {
+      await sendRequest(
+        `http://localhost:5000/api/items/cart/${auth.userId}`,
+        'DELETE',
+        JSON.stringify({
+          itemId: props.id
+        }),
+        {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + auth.token
+        }
+      );
+    } catch (err) {}
+  }
+
   return (
     <React.Fragment>
     {/*
@@ -114,6 +130,9 @@ const PlaceItem = props => {
             <div className="place-item__actions">
               <Button inverse onClick={addItemToCartHandler}>
                 Add to Cart
+              </Button>
+              <Button danger onClick={clearItemFromCart}>
+                Clear Cart Item
               </Button>
               {auth.isAdmin && (
                 <Button to={`/items/${props.id}`}>EDIT</Button>
