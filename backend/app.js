@@ -61,12 +61,14 @@ app.use((error, req, res, next) => {
 
 mongoose
   .connect(
-    `mongodb+srv://jack123:jack123@cluster0-fqlfx.mongodb.net/shop?retryWrites=true&w=majority`
+    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0-fqlfx.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`
   )
   .then(() => {
-    app.listen(5000);
-    console.log("listening on port 5000");
+    app.listen(process.env.PORT || 5000);
+    console.log('Listening on PORT 5000');
   })
   .catch(err => {
     console.log(err);
   });
+
+  //`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0-fqlfx.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`

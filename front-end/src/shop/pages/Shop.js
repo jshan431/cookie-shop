@@ -1,9 +1,9 @@
 import React, {useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+//import { useParams } from 'react-router-dom';
 import { useHttpClient } from '../../shared/hooks/http-hook';
-import Card from '../../shared/components/UIElements/Card';
-import Item from '../components/Item';
-import Button from '../../shared/components/FormElements/Button';
+//import Card from '../../shared/components/UIElements/Card';
+//import Item from '../components/Item';
+//import Button from '../../shared/components/FormElements/Button';
 import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
 import ErrorModal from '../../shared/components/UIElements/ErrorModal';
 import ItemsList from '../../shop/components/ItemsList';
@@ -18,7 +18,7 @@ const Shop = () => {
     const fetchItems = async () => {
       try {
         const responseData = await sendRequest(
-          `http://localhost:5000/api/items`
+          `${process.env.REACT_APP_BACKEND_URL}/items`
         );
         setLoadedItems(responseData.items);
       } catch (err) {}

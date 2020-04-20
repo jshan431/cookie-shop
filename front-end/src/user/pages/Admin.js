@@ -41,7 +41,7 @@ const Admin = () => {
     const fetchCategories = async () => {
       try {
         const responseData = await sendRequest(
-          'http://localhost:5000/api/items/categories'
+          `${process.env.REACT_APP_BACKEND_URL}/items/categories`
         );
 
         setLoadedCategories(responseData.categories);
@@ -61,7 +61,7 @@ const Admin = () => {
         formData.append('categoryName', formState.inputs.categoryName.value);
         formData.append('categoryImageUrl', formState.inputs.categoryImageUrl.value);
         const responseData = await sendRequest(
-          'http://localhost:5000/api/admin/category',
+          `${process.env.REACT_APP_BACKEND_URL}/admin/category`,
           'POST',
           formData,
           {
@@ -79,7 +79,7 @@ const Admin = () => {
         formData.append('categoryName', formState.inputs.categoryName.value);
         formData.append('categoryImageUrl', formState.inputs.categoryImageUrl.value);
         const responseData = await sendRequest(
-          `http://localhost:5000/api/admin/category/${selectedValue.id}`,
+          `${process.env.REACT_APP_BACKEND_URL}/admin/category/${selectedValue.id}`,
           'PATCH',
           formData,
           {
@@ -173,19 +173,3 @@ const Admin = () => {
 };
 
 export default Admin;
-
-/**
- * 
- * initialValue={selectedValue.categoryImageUrl}
-            initialValid={true}
- */
-
-/*    previous form validatation  
-
-  <Button type="submit" disabled={!formState.isValid}>
-  {isCreateMode ? 'NEW CATEGORY' : 'UPDATE CATEGORY'}
-  </Button>
-
-*/
-
-//`http://localhost:5000/api/admin/category/${selectedValue.id}`,

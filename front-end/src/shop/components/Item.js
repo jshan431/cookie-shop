@@ -8,7 +8,7 @@ import { AuthContext } from '../../shared/context/auth-context';
 import { useHttpClient } from '../../shared/hooks/http-hook';
 import './PlaceItem.css';
 
-const PlaceItem = props => {
+const Item = props => {
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const auth = useContext(AuthContext);
 
@@ -32,7 +32,7 @@ const PlaceItem = props => {
     setShowConfirmModal(false);
     try {
       await sendRequest(
-        `http://localhost:5000/api/admin/${props.id}`,
+        process.env.REACT_APP_BACKEND_URL + `/admin/${props.id}`,
         'DELETE',
         null,
         {
@@ -47,7 +47,7 @@ const PlaceItem = props => {
   const addItemToCartHandler = async () => {
     try {
       await sendRequest(
-        `http://localhost:5000/api/items/cart/${auth.userId}`,
+        process.env.REACT_APP_BACKEND_URL + `/items/cart/${auth.userId}`,
         'POST',
         JSON.stringify({
           itemId: props.id
@@ -64,7 +64,7 @@ const PlaceItem = props => {
   const clearItemFromCart = async () => {
     try {
       await sendRequest(
-        `http://localhost:5000/api/items/cart/${auth.userId}`,
+        process.env.REACT_APP_BACKEND_URL + `/items/cart/${auth.userId}`,
         'DELETE',
         JSON.stringify({
           itemId: props.id
@@ -118,7 +118,7 @@ const PlaceItem = props => {
         <Card className="place-item__content">
             <Link to={`/item/${props.id}`}>
               <div className="place-item__image">
-                <img src={`http://localhost:5000/${props.image}`} alt={props.title} />
+                <img src={`${process.env.REACT_APP_ASSET_URL}/${props.image}`} alt={props.title} />
               </div>
             </Link>
             <div className="place-item__info">
@@ -149,7 +149,7 @@ const PlaceItem = props => {
   );
 };
 
-export default PlaceItem;
+export default Item;
 
 /**
  

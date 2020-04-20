@@ -25,7 +25,7 @@ module.exports = (req, res, next) => {
     }
     // verify the token. Second argument should contain the private key used to get generate the key in users-controller.js
     // decodedToken contains the payload that was encoded in the token when we signed it
-    const decodedToken = jwt.verify(token, 'supersecret_dont_share'); 
+    const decodedToken = jwt.verify(token, process.env.JWT_KEY); 
 
     // Add a property called userData to the req. body that cotains userId decoded from the token
     req.userData = {userId: decodedToken.userId, userRole: decodedToken.userRole};

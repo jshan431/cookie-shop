@@ -14,7 +14,7 @@ const Home = () => {
     const fetchCategories = async () => {
       try {
         const responseData = await sendRequest(
-          'http://localhost:5000/api/items/categories'
+          process.env.REACT_APP_BACKEND_URL + '/items/categories'
         );
 
         setLoadedCategories(responseData.categories);

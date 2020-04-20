@@ -40,7 +40,7 @@ const UpdateItem = () => {
     const fetchItem = async () => {
       try {
         const responseData = await sendRequest(
-          `http://localhost:5000/api/items/${itemId}`
+          `${process.env.REACT_APP_BACKEND_URL}/items/${itemId}`
         );
         setLoadedItem(responseData.item);
         setFormData(
@@ -66,7 +66,7 @@ const UpdateItem = () => {
     event.preventDefault();
     try {
       await sendRequest(
-        `http://localhost:5000/api/admin/${itemId}`,
+        `${process.env.REACT_APP_BACKEND_URL}/admin/${itemId}`,
         'PATCH',
         JSON.stringify({
           title: formState.inputs.title.value,

@@ -15,7 +15,7 @@ const CategoryItems = () => {
     const fetchItems = async () => {
       try {
         const responseData = await sendRequest(
-          `http://localhost:5000/api/items/category/${categoryId}`
+          `${process.env.REACT_APP_BACKEND_URL}/items/category/${categoryId}`
         );
         setLoadedItems(responseData.items);
       } catch (err) {}

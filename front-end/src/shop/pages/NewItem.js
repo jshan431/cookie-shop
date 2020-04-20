@@ -59,7 +59,7 @@ const NewItem= () => {
       formData.append('categoryId', formState.inputs.categoryId.value);
       formData.append('price', formState.inputs.price.value);
       await sendRequest(
-        'http://localhost:5000/api/admin/item',
+        process.env.REACT_APP_BACKEND_URL + '/admin/item',
         'POST',
         formData,
         {

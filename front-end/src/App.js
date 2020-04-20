@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import {
   BrowserRouter as Router,
   Route,
@@ -6,20 +6,29 @@ import {
   Switch
 } from 'react-router-dom';
 
-import Admin from './user/pages/Admin';
-import Shop from './shop/pages/Shop';
-import Cart from './shop/pages/Cart'
-import Home from './user/pages/Home';
-import NewItem from './shop/pages/NewItem';
-import CategoryItems from './shop/pages/CategoryItems';
-import UpdateItem from './shop/pages/UpdateItem';
-import Auth from './user/pages/Auth';
+//import Admin from './user/pages/Admin';
+//import Shop from './shop/pages/Shop';
+//import Cart from './shop/pages/Cart';
+//import Home from './user/pages/Home';
+//import NewItem from './shop/pages/NewItem';
+//import CategoryItems from './shop/pages/CategoryItems';
+//import UpdateItem from './shop/pages/UpdateItem';
+//import Auth from './user/pages/Auth';
 import MainNavigation from './shared/components/Navigation/MainNavigation';
 import { AuthContext } from './shared/context/auth-context';
-import SingleItem from './shop/pages/SingleItem';
+//import SingleItem from './shop/pages/SingleItem';
 import { useAuth } from './shared/hooks/auth-hook';
+import LoadingSpinner from './shared/components/UIElements/LoadingSpinner';
 
-let logoutTimer;
+const Home = React.lazy(() => import('./user/pages/Home'));
+const NewItem = React.lazy(() => import('./shop/pages/NewItem'));
+const CategoryItems = React.lazy(() => import('./shop/pages/CategoryItems'));
+const UpdateItem = React.lazy(() => import('./shop/pages/UpdateItem'));
+const Auth = React.lazy(() => import('./user/pages/Auth'));
+const Admin = React.lazy(() => import('./user/pages/Admin'));
+const Shop = React.lazy(() => import('./shop/pages/Shop'));
+const Cart = React.lazy(() => import('./shop/pages/Cart'));
+const SingleItem = React.lazy(() => import('./shop/pages/SingleItem'));
 
 const App = () => {
   const { token, login, logout, userId, isAdmin} = useAuth();
@@ -116,7 +125,7 @@ const App = () => {
     >
       <Router>
         <MainNavigation />
-        <main>{routes}</main>
+        <main><Suspense fallback={<div className="center"><LoadingSpinner /></div>}>{routes}</Suspense></main>
       </Router>
     </AuthContext.Provider>
   );
